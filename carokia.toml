@@ -7,3 +7,8 @@ model = "llama3.2"
 [brain]
 tick_rate_hz = 10.0
 system_prompt = "You are Carokia, an advanced autonomous robot companion. You are helpful, protective, and loyal. Keep responses concise."
+
+[voice]
+enabled = true
+whisper_model = "base"
+record_seconds = 5

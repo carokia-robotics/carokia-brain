@@ -54,6 +54,14 @@ impl SensorFrame {
     }
 }
 
+/// Raw audio buffer for speech processing.
+#[derive(Debug, Clone)]
+pub struct AudioBuffer {
+    pub samples: Vec<f32>,
+    pub sample_rate: u32,
+    pub channels: u16,
+}
+
 /// Priority level for actions and behaviors.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
 pub enum Priority {
@@ -113,5 +121,30 @@ mod tests {
     fn action_command_creation() {
         let cmd = ActionCommand::new(Priority::High, Action::Halt);
         assert_eq!(cmd.priority, Priority::High);
+    }
+
+    #[test]
+    fn audio_buffer_creation() {
+        let buf = AudioBuffer {
+            samples: vec![0.0, 0.1, -0.1, 0.5],
+            sample_rate: 16000,
+            channels: 1,
+        };
+        assert_eq!(buf.samples.len(), 4);
+        assert_eq!(buf.sample_rate, 16000);
+        assert_eq!(buf.channels, 1);
+    }
+
+    #[test]
+    fn audio_buffer_clone() {
+        let buf = AudioBuffer {
+            samples: vec![0.5; 100],
+            sample_rate: 44100,
+            channels: 2,
+        };
+        let cloned = buf.clone();
+        assert_eq!(cloned.samples.len(), buf.samples.len());
+        assert_eq!(cloned.sample_rate, buf.sample_rate);
+        assert_eq!(cloned.channels, buf.channels);
     }
 }

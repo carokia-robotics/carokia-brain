@@ -4,6 +4,10 @@ edition.workspace = true
 version.workspace = true
 license.workspace = true
 
+[features]
+default = []
+voice = ["carokia-perception/audio", "carokia-perception/whisper", "ctrlc"]
+
 [dependencies]
 carokia-core = { path = "../carokia-core" }
 carokia-memory = { path = "../carokia-memory" }
@@ -20,3 +24,4 @@ thiserror = { workspace = true }
 async-trait = { workspace = true }
 uuid = { workspace = true }
 tokio-util = { workspace = true }
+ctrlc = { version = "3.4", optional = true }

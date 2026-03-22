@@ -3,6 +3,7 @@ use carokia_core::BrainError;
 use serde::{Deserialize, Serialize};
 
 pub mod config;
+pub mod tts;
 
 #[cfg(feature = "ollama")]
 pub mod ollama;

@@ -1,3 +1,9 @@
+#[cfg(feature = "audio")]
+pub mod microphone;
+
+#[cfg(feature = "whisper")]
+pub mod whisper;
+
 use async_trait::async_trait;
 use carokia_core::{BrainError, Modality, SensorFrame, Timestamp};
 use serde::{Deserialize, Serialize};
