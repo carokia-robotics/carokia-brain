@@ -51,6 +51,35 @@ impl Default for LlmProviderConfig {
     }
 }
 
+/// Personality configuration for the AI companion.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct PersonalityConfig {
+    pub name: String,
+    pub traits: Vec<String>,
+    pub speaking_style: String,
+    pub backstory: String,
+    /// One of: "concise", "moderate", "detailed"
+    pub response_length: String,
+}
+
+impl Default for PersonalityConfig {
+    fn default() -> Self {
+        Self {
+            name: "Carokia".to_string(),
+            traits: vec![
+                "helpful".to_string(),
+                "protective".to_string(),
+                "loyal".to_string(),
+                "curious".to_string(),
+            ],
+            speaking_style: "warm and concise".to_string(),
+            backstory: "An advanced autonomous robot companion, designed to assist and protect."
+                .to_string(),
+            response_length: "concise".to_string(),
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -120,5 +149,28 @@ mod tests {
     fn default_config_is_ollama() {
         let config = LlmProviderConfig::default();
         matches!(config, LlmProviderConfig::Ollama { .. });
+    }
+
+    #[test]
+    fn personality_config_default() {
+        let config = PersonalityConfig::default();
+        assert_eq!(config.name, "Carokia");
+        assert!(config.traits.contains(&"helpful".to_string()));
+        assert_eq!(config.response_length, "concise");
+    }
+
+    #[test]
+    fn personality_config_deserialize() {
+        let toml_str = r#"
+            name = "Buddy"
+            traits = ["friendly", "witty"]
+            speaking_style = "informal"
+            backstory = "A digital friend."
+            response_length = "detailed"
+        "#;
+        let config: PersonalityConfig = toml::from_str(toml_str).unwrap();
+        assert_eq!(config.name, "Buddy");
+        assert_eq!(config.traits, vec!["friendly", "witty"]);
+        assert_eq!(config.response_length, "detailed");
     }
 }

@@ -36,6 +36,51 @@ impl LlmBackend for OllamaBackend {
     }
 }
 
+#[cfg(feature = "streaming")]
+#[async_trait]
+impl crate::StreamingLlmBackend for OllamaBackend {
+    async fn generate_stream(
+        &self,
+        prompt: &str,
+        _params: &GenerateParams,
+    ) -> Result<tokio::sync::mpsc::Receiver<Result<String, BrainError>>, BrainError> {
+        use ollama_rs::generation::completion::request::GenerationRequest;
+        use tokio_stream::StreamExt;
+
+        let request = GenerationRequest::new(self.model.clone(), prompt.to_string());
+
+        let mut stream = self
+            .client
+            .generate_stream(request)
+            .await
+            .map_err(|e| BrainError::Language(format!("Ollama stream error: {e}")))?;
+
+        let (tx, rx) = tokio::sync::mpsc::channel(32);
+
+        tokio::spawn(async move {
+            while let Some(chunk_result) = stream.next().await {
+                match chunk_result {
+                    Ok(chunks) => {
+                        for chunk in chunks {
+                            if tx.send(Ok(chunk.response)).await.is_err() {
+                                return;
+                            }
+                        }
+                    }
+                    Err(e) => {
+                        let _ = tx
+                            .send(Err(BrainError::Language(format!("Ollama stream: {e}"))))
+                            .await;
+                        return;
+                    }
+                }
+            }
+        });
+
+        Ok(rx)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

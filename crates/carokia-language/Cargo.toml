@@ -3,11 +3,16 @@ name = "carokia-language"
 edition.workspace = true
 version.workspace = true
 license.workspace = true
+description = "LLM backends (Ollama, Claude), conversation management, and TTS for Carokia"
+repository = "https://github.com/carokia-robotics/carokia-brain"
+keywords = ["robotics", "ai", "autonomous", "robot"]
+categories = ["science::robotics"]
 
 [features]
-default = ["ollama"]
+default = ["ollama", "streaming"]
 ollama = ["ollama-rs"]
 claude = ["reqwest"]
+streaming = ["tokio-stream"]
 
 [dependencies]
 carokia-core = { path = "../carokia-core" }
@@ -21,3 +26,5 @@ uuid = { workspace = true }
 ollama-rs = { workspace = true, optional = true }
 reqwest = { workspace = true, optional = true }
 toml = { workspace = true }
+tokio-stream = { workspace = true, optional = true }
+chrono = { workspace = true }

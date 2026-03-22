@@ -3,6 +3,10 @@ name = "carokia-brain"
 edition.workspace = true
 version.workspace = true
 license.workspace = true
+description = "Top-level orchestrator and cognitive loop for the Carokia robot brain"
+repository = "https://github.com/carokia-robotics/carokia-brain"
+keywords = ["robotics", "ai", "autonomous", "robot"]
+categories = ["science::robotics"]
 
 [features]
 default = []
@@ -14,6 +18,8 @@ llm-planner = ["carokia-planner/llm"]
 reasoning = ["carokia-planner/reasoning"]
 reflection = ["carokia-memory/reflection"]
 simulation = ["carokia-sim"]
+cli = ["clap"]
+streaming = ["carokia-language/streaming"]
 
 [dependencies]
 carokia-core = { path = "../carokia-core" }
@@ -33,3 +39,4 @@ uuid = { workspace = true }
 tokio-util = { workspace = true }
 ctrlc = { version = "3.4", optional = true }
 carokia-sim = { path = "../carokia-sim", optional = true }
+clap = { workspace = true, optional = true }
