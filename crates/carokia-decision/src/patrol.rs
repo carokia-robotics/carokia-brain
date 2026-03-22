@@ -22,11 +22,16 @@ pub struct PatrolBehavior {
 
 impl PatrolBehavior {
     pub fn new(waypoints: Vec<(f64, f64)>) -> Self {
-        assert!(!waypoints.is_empty(), "PatrolBehavior requires at least one waypoint");
+        assert!(
+            !waypoints.is_empty(),
+            "PatrolBehavior requires at least one waypoint"
+        );
         Self {
             waypoints,
             arrival_threshold: 0.5,
-            state: Mutex::new(PatrolState { current_waypoint: 0 }),
+            state: Mutex::new(PatrolState {
+                current_waypoint: 0,
+            }),
         }
     }
 

@@ -74,7 +74,11 @@ impl TaskNode {
 #[async_trait]
 pub trait Planner: Send + Sync {
     async fn decompose(&self, goal: &Goal) -> Result<Vec<TaskNode>, BrainError>;
-    async fn replan(&self, goal: &Goal, failed_tasks: &[TaskNode]) -> Result<Vec<TaskNode>, BrainError>;
+    async fn replan(
+        &self,
+        goal: &Goal,
+        failed_tasks: &[TaskNode],
+    ) -> Result<Vec<TaskNode>, BrainError>;
 }
 
 /// A simple rule-based planner with hardcoded decompositions.
@@ -99,30 +103,33 @@ impl Planner for RulePlanner {
 
         if desc.contains("move") || desc.contains("go to") || desc.contains("navigate") {
             Ok(vec![
-                TaskNode::new(&goal.id, "Plan path")
-                    .with_action(Action::Halt),
-                TaskNode::new(&goal.id, "Execute movement")
-                    .with_action(Action::Move { x: 1.0, y: 0.0, z: 0.0 }),
+                TaskNode::new(&goal.id, "Plan path").with_action(Action::Halt),
+                TaskNode::new(&goal.id, "Execute movement").with_action(Action::Move {
+                    x: 1.0,
+                    y: 0.0,
+                    z: 0.0,
+                }),
             ])
         } else if desc.contains("say") || desc.contains("speak") || desc.contains("tell") {
-            Ok(vec![
-                TaskNode::new(&goal.id, "Generate speech")
-                    .with_action(Action::Speak { text: goal.description.clone() }),
-            ])
+            Ok(vec![TaskNode::new(&goal.id, "Generate speech")
+                .with_action(Action::Speak {
+                    text: goal.description.clone(),
+                })])
         } else if desc.contains("stop") || desc.contains("halt") {
             Ok(vec![
-                TaskNode::new(&goal.id, "Halt all motion")
-                    .with_action(Action::Halt),
+                TaskNode::new(&goal.id, "Halt all motion").with_action(Action::Halt)
             ])
         } else {
             // Default: single task echoing the goal.
-            Ok(vec![
-                TaskNode::new(&goal.id, &goal.description),
-            ])
+            Ok(vec![TaskNode::new(&goal.id, &goal.description)])
         }
     }
 
-    async fn replan(&self, goal: &Goal, _failed_tasks: &[TaskNode]) -> Result<Vec<TaskNode>, BrainError> {
+    async fn replan(
+        &self,
+        goal: &Goal,
+        _failed_tasks: &[TaskNode],
+    ) -> Result<Vec<TaskNode>, BrainError> {
         // Simple strategy: just re-decompose.
         self.decompose(goal).await
     }

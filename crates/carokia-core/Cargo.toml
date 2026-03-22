@@ -3,6 +3,10 @@ name = "carokia-core"
 edition.workspace = true
 version.workspace = true
 license.workspace = true
+description = "Shared types, traits, event bus, and error definitions for the Carokia robotics runtime"
+repository = "https://github.com/carokia-robotics/carokia-brain"
+keywords = ["robotics", "ai", "autonomous", "robot"]
+categories = ["science::robotics"]
 
 [dependencies]
 tokio = { workspace = true }

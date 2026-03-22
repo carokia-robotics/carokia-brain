@@ -19,5 +19,8 @@ pub trait Actuator: Send + Sync {
 #[async_trait]
 pub trait MessageBus: Send + Sync {
     async fn publish(&self, topic: &str, payload: Vec<u8>) -> Result<(), BrainError>;
-    async fn subscribe(&self, topic: &str) -> Result<tokio::sync::broadcast::Receiver<Vec<u8>>, BrainError>;
+    async fn subscribe(
+        &self,
+        topic: &str,
+    ) -> Result<tokio::sync::broadcast::Receiver<Vec<u8>>, BrainError>;
 }

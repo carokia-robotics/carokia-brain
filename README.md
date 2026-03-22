@@ -48,6 +48,7 @@ simulation, and guardian-mode security into a single coherent architecture.
 | 4      | The Mind       | Persistent memory (SQLite), LLM-powered planning    |
 | 5      | The Navigator  | 2D simulation, lidar, autonomous obstacle avoidance |
 | 6      | The Guardian   | Patrol, threat detection, alerts, emergency response|
+| 9      | The Ship       | CI/CD, crates.io prep, docs, CONTRIBUTING, clap CLI |
 
 ## Prerequisites
 
@@ -125,10 +126,10 @@ Confirmed, triggering an emergency halt and alert — all rendered live in the t
 
 ## Contributing
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/my-feature`)
-3. Ensure `cargo test --workspace` and `cargo clippy --workspace` pass
-4. Submit a pull request
+See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines on building, testing,
+commit conventions, and submitting pull requests.
+
+See [docs/architecture.md](docs/architecture.md) for a full architecture overview.
 
 ## License
 

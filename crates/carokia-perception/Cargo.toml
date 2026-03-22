@@ -3,6 +3,10 @@ name = "carokia-perception"
 edition.workspace = true
 version.workspace = true
 license.workspace = true
+description = "Sensor processing pipeline (vision, audio, lidar, Whisper) for Carokia"
+repository = "https://github.com/carokia-robotics/carokia-brain"
+keywords = ["robotics", "ai", "autonomous", "robot"]
+categories = ["science::robotics"]
 
 [features]
 default = []

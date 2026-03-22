@@ -181,9 +181,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     #[cfg(not(feature = "llm-planner"))]
     {
-        println!(
-            "--- Part 3: LLM Planning (skipped - enable 'llm-planner' feature) ---\n"
-        );
+        println!("--- Part 3: LLM Planning (skipped - enable 'llm-planner' feature) ---\n");
     }
 
     println!("=== Demo complete ===");

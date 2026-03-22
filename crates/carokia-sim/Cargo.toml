@@ -3,6 +3,10 @@ name = "carokia-sim"
 edition.workspace = true
 version.workspace = true
 license.workspace = true
+description = "2D physics simulation with lidar and ASCII rendering for Carokia"
+repository = "https://github.com/carokia-robotics/carokia-brain"
+keywords = ["robotics", "ai", "autonomous", "robot"]
+categories = ["science::robotics"]
 
 [dependencies]
 carokia-core = { path = "../carokia-core" }

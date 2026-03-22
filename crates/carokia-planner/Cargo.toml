@@ -3,6 +3,10 @@ name = "carokia-planner"
 edition.workspace = true
 version.workspace = true
 license.workspace = true
+description = "Goal decomposition and task planning (rule-based and LLM) for Carokia"
+repository = "https://github.com/carokia-robotics/carokia-brain"
+keywords = ["robotics", "ai", "autonomous", "robot"]
+categories = ["science::robotics"]
 
 [features]
 default = []

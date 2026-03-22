@@ -166,47 +166,27 @@ mod tests {
 
     #[test]
     fn ray_circle_hit() {
-        let d = ray_circle_intersect(
-            Vec2::new(0.0, 0.0),
-            0.0,
-            Vec2::new(5.0, 0.0),
-            0.5,
-        );
+        let d = ray_circle_intersect(Vec2::new(0.0, 0.0), 0.0, Vec2::new(5.0, 0.0), 0.5);
         assert!(d.is_some());
         assert!((d.unwrap() - 4.5).abs() < 1e-6);
     }
 
     #[test]
     fn ray_circle_miss() {
-        let d = ray_circle_intersect(
-            Vec2::new(0.0, 0.0),
-            0.0,
-            Vec2::new(5.0, 5.0),
-            0.5,
-        );
+        let d = ray_circle_intersect(Vec2::new(0.0, 0.0), 0.0, Vec2::new(5.0, 5.0), 0.5);
         assert!(d.is_none());
     }
 
     #[test]
     fn ray_circle_behind() {
         // Circle behind the ray origin
-        let d = ray_circle_intersect(
-            Vec2::new(0.0, 0.0),
-            0.0,
-            Vec2::new(-5.0, 0.0),
-            0.5,
-        );
+        let d = ray_circle_intersect(Vec2::new(0.0, 0.0), 0.0, Vec2::new(-5.0, 0.0), 0.5);
         assert!(d.is_none());
     }
 
     #[test]
     fn ray_circle_upward() {
-        let d = ray_circle_intersect(
-            Vec2::new(0.0, 0.0),
-            FRAC_PI_2,
-            Vec2::new(0.0, 3.0),
-            1.0,
-        );
+        let d = ray_circle_intersect(Vec2::new(0.0, 0.0), FRAC_PI_2, Vec2::new(0.0, 3.0), 1.0);
         assert!(d.is_some());
         assert!((d.unwrap() - 2.0).abs() < 1e-6);
     }

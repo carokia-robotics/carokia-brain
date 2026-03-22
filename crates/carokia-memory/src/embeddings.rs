@@ -61,9 +61,7 @@ pub struct MockEmbedder;
 #[async_trait]
 impl Embedder for MockEmbedder {
     async fn embed(&self, text: &str) -> Result<Vec<f32>, BrainError> {
-        let hash = text
-            .bytes()
-            .fold(0u32, |acc, b| acc.wrapping_add(b as u32));
+        let hash = text.bytes().fold(0u32, |acc, b| acc.wrapping_add(b as u32));
         Ok((0..384)
             .map(|i| ((hash.wrapping_mul(i + 1)) as f32 / u32::MAX as f32) - 0.5)
             .collect())

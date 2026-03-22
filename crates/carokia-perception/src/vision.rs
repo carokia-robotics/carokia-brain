@@ -98,10 +98,7 @@ impl VisionAnalyzer {
             .await
             .map_err(|e| BrainError::Perception(format!("vision API parse error: {e}")))?;
 
-        let description = json["response"]
-            .as_str()
-            .unwrap_or("")
-            .to_string();
+        let description = json["response"].as_str().unwrap_or("").to_string();
 
         let objects = extract_objects(&description);
 

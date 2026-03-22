@@ -35,7 +35,9 @@ async fn main() {
         eprintln!("Voice chat requires the 'voice' feature.");
         eprintln!();
         eprintln!("Run with:");
-        eprintln!("  cargo run --example voice_chat -p carokia-brain --features carokia-brain/voice");
+        eprintln!(
+            "  cargo run --example voice_chat -p carokia-brain --features carokia-brain/voice"
+        );
         std::process::exit(1);
     }
 

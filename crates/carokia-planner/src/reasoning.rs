@@ -71,9 +71,7 @@ impl ChainOfThoughtReasoner {
                     content: response.trim().to_string(),
                 };
                 steps.push(answer_step);
-                let final_answer = steps
-                    .last()
-                    .map(|s| s.content.clone());
+                let final_answer = steps.last().map(|s| s.content.clone());
                 return Ok(ReasoningChain {
                     steps,
                     final_answer,
@@ -82,7 +80,11 @@ impl ChainOfThoughtReasoner {
 
             let has_answer = new_steps.iter().any(|s| s.step_type == StepType::Answer);
             for step in &new_steps {
-                context.push_str(&format!("{}: {}\n", step_type_label(&step.step_type), step.content));
+                context.push_str(&format!(
+                    "{}: {}\n",
+                    step_type_label(&step.step_type),
+                    step.content
+                ));
             }
             steps.extend(new_steps);
 
@@ -165,7 +167,12 @@ mod tests {
 
     #[test]
     fn step_type_serialization() {
-        for st in [StepType::Thought, StepType::Action, StepType::Observation, StepType::Answer] {
+        for st in [
+            StepType::Thought,
+            StepType::Action,
+            StepType::Observation,
+            StepType::Answer,
+        ] {
             let json = serde_json::to_string(&st).unwrap();
             let restored: StepType = serde_json::from_str(&json).unwrap();
             assert_eq!(restored, st);
@@ -200,7 +207,10 @@ mod tests {
                             Answer: 42";
         let backend = Arc::new(MockBackend::new(mock_response));
         let reasoner = ChainOfThoughtReasoner::new(backend, 5);
-        let chain = reasoner.reason("What is the meaning of life?").await.unwrap();
+        let chain = reasoner
+            .reason("What is the meaning of life?")
+            .await
+            .unwrap();
         assert!(!chain.steps.is_empty());
         assert!(chain.final_answer.is_some());
         assert_eq!(chain.final_answer.unwrap(), "42");
@@ -235,7 +245,10 @@ mod tests {
                             Answer: Paris";
         let backend = Arc::new(MockBackend::new(mock_response));
         let reasoner = ChainOfThoughtReasoner::new(backend, 5);
-        let chain = reasoner.reason("What is the capital of France?").await.unwrap();
+        let chain = reasoner
+            .reason("What is the capital of France?")
+            .await
+            .unwrap();
         assert_eq!(chain.steps.len(), 3);
         assert_eq!(chain.final_answer.unwrap(), "Paris");
     }

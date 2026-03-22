@@ -197,9 +197,7 @@ mod tests {
         let cancel = CancellationToken::new();
         let cancel2 = cancel.clone();
 
-        let handle = tokio::spawn(async move {
-            brain.run(cancel2).await
-        });
+        let handle = tokio::spawn(async move { brain.run(cancel2).await });
 
         // Let it run a few ticks then cancel.
         tokio::time::sleep(Duration::from_millis(50)).await;

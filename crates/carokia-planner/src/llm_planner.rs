@@ -40,13 +40,11 @@ fn extract_json(text: &str) -> Option<&str> {
 
 /// Parse the LLM response into TaskNode entries.
 fn parse_subtasks(goal: &Goal, response: &str) -> Result<Vec<TaskNode>, BrainError> {
-    let json_str = extract_json(response).ok_or_else(|| {
-        BrainError::Planner("No JSON found in LLM response".into())
-    })?;
+    let json_str = extract_json(response)
+        .ok_or_else(|| BrainError::Planner("No JSON found in LLM response".into()))?;
 
-    let parsed: serde_json::Value = serde_json::from_str(json_str).map_err(|e| {
-        BrainError::Planner(format!("JSON parse error: {e}"))
-    })?;
+    let parsed: serde_json::Value = serde_json::from_str(json_str)
+        .map_err(|e| BrainError::Planner(format!("JSON parse error: {e}")))?;
 
     let subtasks = parsed["subtasks"]
         .as_array()
@@ -77,7 +75,9 @@ fn parse_subtasks(goal: &Goal, response: &str) -> Result<Vec<TaskNode>, BrainErr
     }
 
     if nodes.is_empty() {
-        return Err(BrainError::Planner("LLM returned empty subtask list".into()));
+        return Err(BrainError::Planner(
+            "LLM returned empty subtask list".into(),
+        ));
     }
 
     Ok(nodes)
@@ -124,8 +124,10 @@ impl Planner for LlmPlanner {
         goal: &Goal,
         failed_tasks: &[TaskNode],
     ) -> Result<Vec<TaskNode>, BrainError> {
-        let failed_descriptions: Vec<&str> =
-            failed_tasks.iter().map(|t| t.description.as_str()).collect();
+        let failed_descriptions: Vec<&str> = failed_tasks
+            .iter()
+            .map(|t| t.description.as_str())
+            .collect();
 
         let prompt = format!(
             "The following subtasks failed for a goal. Create a revised plan with 3-7 subtasks. Return JSON only.\n\
@@ -179,9 +181,7 @@ mod tests {
     }
 
     fn mock_json_with_prose() -> String {
-        "Sure, here is the plan:\n\n".to_string()
-            + &mock_json_response()
-            + "\n\nI hope this helps!"
+        "Sure, here is the plan:\n\n".to_string() + &mock_json_response() + "\n\nI hope this helps!"
     }
 
     #[tokio::test]

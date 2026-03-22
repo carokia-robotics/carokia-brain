@@ -30,9 +30,7 @@ impl AsciiRenderer {
 
         // Draw walls by sampling points along each wall segment.
         for wall in &world.walls {
-            let steps = ((wall.start.distance_to(wall.end))
-                * scale_x.max(scale_y))
-                .ceil() as usize;
+            let steps = ((wall.start.distance_to(wall.end)) * scale_x.max(scale_y)).ceil() as usize;
             let steps = steps.max(1);
             for i in 0..=steps {
                 let t = i as f64 / steps as f64;
@@ -97,13 +95,7 @@ impl AsciiRenderer {
 
     /// Convert world coordinates to grid coordinates.
     /// Grid y is inverted: row 0 = top = max world y.
-    fn world_to_grid(
-        &self,
-        wx: f64,
-        wy: f64,
-        scale_x: f64,
-        scale_y: f64,
-    ) -> (usize, usize) {
+    fn world_to_grid(&self, wx: f64, wy: f64, scale_x: f64, scale_y: f64) -> (usize, usize) {
         let gx = (wx * scale_x).round() as isize;
         let gy = (self.height as f64 - 1.0 - wy * scale_y).round() as isize;
         let gx = gx.clamp(0, self.width as isize - 1) as usize;

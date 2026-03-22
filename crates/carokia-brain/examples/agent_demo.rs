@@ -14,8 +14,8 @@ async fn main() {
 
     use carokia_core::emotion::{EmotionalEvent, EmotionalState};
     use carokia_language::MockBackend;
-    use carokia_memory::{MemoryEntry, MemoryKind};
     use carokia_memory::reflection::ReflectionEngine;
+    use carokia_memory::{MemoryEntry, MemoryKind};
     use carokia_planner::reasoning::ChainOfThoughtReasoner;
 
     println!("=== Carokia Agent Demo ===\n");
@@ -48,7 +48,11 @@ async fn main() {
     println!("\n--- Emotional State Tracking ---\n");
 
     let mut emotion = EmotionalState::neutral();
-    println!("  Initial: {} ({})", emotion.mood_label(), emotion.to_prompt_modifier());
+    println!(
+        "  Initial: {} ({})",
+        emotion.mood_label(),
+        emotion.to_prompt_modifier()
+    );
 
     let events = [
         ("Goal completed", EmotionalEvent::GoalCompleted),
@@ -59,37 +63,68 @@ async fn main() {
 
     for (label, event) in events {
         emotion.update(event);
-        println!("  After {label}: {} (valence={:.2}, arousal={:.2})",
-            emotion.mood_label(), emotion.valence, emotion.arousal);
+        println!(
+            "  After {label}: {} (valence={:.2}, arousal={:.2})",
+            emotion.mood_label(),
+            emotion.valence,
+            emotion.arousal
+        );
     }
 
     // Apply some decay
     for _ in 0..5 {
         emotion.decay(1.0);
     }
-    println!("  After 5s decay: {} (valence={:.2}, arousal={:.2})",
-        emotion.mood_label(), emotion.valence, emotion.arousal);
+    println!(
+        "  After 5s decay: {} (valence={:.2}, arousal={:.2})",
+        emotion.mood_label(),
+        emotion.valence,
+        emotion.arousal
+    );
 
     // --- 3. Self-reflection ---
     println!("\n--- Self-Reflection ---\n");
 
     let mock_reflection = Arc::new(MockBackend::new(
         "I notice a recurring pattern of obstacle encounters followed by avoidance maneuvers, \
-         suggesting the current patrol route may need optimization."
+         suggesting the current patrol route may need optimization.",
     ));
 
     let reflection_engine = ReflectionEngine::new(mock_reflection, 5);
 
     let memories = vec![
-        MemoryEntry::new(MemoryKind::Perception, "Obstacle detected at 2m".into(), 0.5),
-        MemoryEntry::new(MemoryKind::Event, "Avoided obstacle successfully".into(), 0.7),
-        MemoryEntry::new(MemoryKind::Perception, "Obstacle detected at 1.5m".into(), 0.6),
-        MemoryEntry::new(MemoryKind::Event, "Avoided obstacle successfully".into(), 0.7),
-        MemoryEntry::new(MemoryKind::Conversation, "User asked about patrol status".into(), 0.4),
+        MemoryEntry::new(
+            MemoryKind::Perception,
+            "Obstacle detected at 2m".into(),
+            0.5,
+        ),
+        MemoryEntry::new(
+            MemoryKind::Event,
+            "Avoided obstacle successfully".into(),
+            0.7,
+        ),
+        MemoryEntry::new(
+            MemoryKind::Perception,
+            "Obstacle detected at 1.5m".into(),
+            0.6,
+        ),
+        MemoryEntry::new(
+            MemoryKind::Event,
+            "Avoided obstacle successfully".into(),
+            0.7,
+        ),
+        MemoryEntry::new(
+            MemoryKind::Conversation,
+            "User asked about patrol status".into(),
+            0.4,
+        ),
     ];
 
     if reflection_engine.should_reflect(memories.len()) {
-        let insight = reflection_engine.reflect(&memories).await.expect("reflection failed");
+        let insight = reflection_engine
+            .reflect(&memories)
+            .await
+            .expect("reflection failed");
         println!("  Reflection insight: {}", insight.content);
         println!("  Tags: {:?}", insight.tags);
     }

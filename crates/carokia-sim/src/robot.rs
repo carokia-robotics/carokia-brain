@@ -34,13 +34,7 @@ impl SimRobot {
     /// Uses sub-stepping to prevent tunneling through walls.
     /// The robot stops at the last valid position before a collision.
     /// Returns the resulting position.
-    pub fn step(
-        &mut self,
-        linear_vel: f64,
-        angular_vel: f64,
-        dt: f64,
-        world: &World,
-    ) -> Vec2 {
+    pub fn step(&mut self, linear_vel: f64, angular_vel: f64, dt: f64, world: &World) -> Vec2 {
         self.heading += angular_vel * dt;
         // Normalize heading to [0, 2*pi).
         self.heading = self.heading.rem_euclid(std::f64::consts::TAU);

@@ -194,7 +194,8 @@ impl BehaviorDecisionEngine {
     pub fn add_behavior(&mut self, behavior: Box<dyn Behavior>) {
         self.behaviors.push(behavior);
         // Sort by priority descending so highest-priority behaviors are evaluated first.
-        self.behaviors.sort_by_key(|b| std::cmp::Reverse(b.priority()));
+        self.behaviors
+            .sort_by_key(|b| std::cmp::Reverse(b.priority()));
     }
 
     /// Evaluate all behaviors and return the command from the highest-priority one that fires.
@@ -316,7 +317,11 @@ mod tests {
         let mut state = WorldState::new();
         state.percepts.push(Percept::new(
             Modality::Vision,
-            PerceptContent::Person { name: None, distance: 3.0, bearing: 0.0 },
+            PerceptContent::Person {
+                name: None,
+                distance: 3.0,
+                bearing: 0.0,
+            },
             0.9,
         ));
         let cmd = engine.tick(&state).await.unwrap().unwrap();

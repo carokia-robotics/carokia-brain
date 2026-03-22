@@ -2,6 +2,9 @@
 //!
 //! Run with: cargo run --example guardian_demo -p carokia-brain --features simulation
 //!
+//! With clap CLI:
+//!   cargo run --example guardian_demo -p carokia-brain --features "simulation,cli" -- --max-ticks 200
+//!
 //! The robot patrols waypoints around a room. After ~50 ticks an intruder
 //! (unknown person) is spawned. The threat detection system escalates through
 //! Suspicious -> Confirmed, triggering an emergency halt and alert.
@@ -13,9 +16,33 @@ async fn main() {
     use carokia_decision::{Behavior, PatrolBehavior, ThreatDetectionBehavior, ThreatLevel};
     use carokia_sim::{ObjectKind, SimObject, Simulation, Vec2, World};
 
-    let max_ticks: usize = 200;
-    let intruder_spawn_tick: usize = 50;
-    let sustained_ticks: usize = 5;
+    #[cfg(feature = "cli")]
+    use clap::Parser;
+
+    #[cfg(feature = "cli")]
+    #[derive(Parser)]
+    #[command(name = "carokia-guardian", about = "Carokia guardian mode demo")]
+    struct Args {
+        /// Maximum simulation ticks
+        #[arg(long, default_value_t = 200)]
+        max_ticks: usize,
+        /// Tick at which the intruder spawns
+        #[arg(long, default_value_t = 50)]
+        intruder_tick: usize,
+        /// Sustained detection ticks before confirmation
+        #[arg(long, default_value_t = 5)]
+        sustained_ticks: usize,
+    }
+
+    #[cfg(feature = "cli")]
+    let args = Args::parse();
+
+    #[cfg(feature = "cli")]
+    let (max_ticks, intruder_spawn_tick, sustained_ticks) =
+        (args.max_ticks, args.intruder_tick, args.sustained_ticks);
+
+    #[cfg(not(feature = "cli"))]
+    let (max_ticks, intruder_spawn_tick, sustained_ticks) = (200_usize, 50_usize, 5_usize);
 
     // --- Build the world ---
     let mut world = World::simple_room(12.0, 10.0);
@@ -41,12 +68,7 @@ async fn main() {
     });
 
     // --- Set up patrol waypoints (clockwise around the room) ---
-    let waypoints = vec![
-        (2.0, 2.0),
-        (10.0, 2.0),
-        (10.0, 8.0),
-        (2.0, 8.0),
-    ];
+    let waypoints = vec![(2.0, 2.0), (10.0, 2.0), (10.0, 8.0), (2.0, 8.0)];
 
     let robot = carokia_sim::SimRobot::new(2.0, 2.0);
     let mut sim = Simulation::new(world, robot, 10.0, 48, 20);
@@ -84,7 +106,13 @@ async fn main() {
         // Detect unknown persons within alert distance
         let nearby = sim.nearby_objects(6.0);
         let unknown_person_nearby = nearby.iter().any(|obj| {
-            matches!(obj.kind, ObjectKind::Person { is_known: false, .. })
+            matches!(
+                obj.kind,
+                ObjectKind::Person {
+                    is_known: false,
+                    ..
+                }
+            )
         });
 
         // Update threat detector by simulating its evaluate
@@ -95,7 +123,13 @@ async fn main() {
             use carokia_perception::{Percept, PerceptContent};
 
             let person_obj = nearby.iter().find(|obj| {
-                matches!(obj.kind, ObjectKind::Person { is_known: false, .. })
+                matches!(
+                    obj.kind,
+                    ObjectKind::Person {
+                        is_known: false,
+                        ..
+                    }
+                )
             });
 
             if let Some(person) = person_obj {
@@ -175,9 +209,7 @@ async fn main() {
 
             // Lidar-based obstacle avoidance
             let lidar = sim.lidar_scan();
-            let front_min = lidar[0]
-                .min(lidar[1])
-                .min(lidar[lidar.len() - 1]);
+            let front_min = lidar[0].min(lidar[1]).min(lidar[lidar.len() - 1]);
 
             if front_min < 1.0 {
                 let left_avg: f64 = lidar[1..=3].iter().sum::<f64>() / 3.0;
@@ -241,16 +273,8 @@ async fn main() {
             "",
             pad = width.saturating_sub(32)
         );
-        println!(
-            "| Threat: {:<w$}|",
-            threat_display,
-            w = width - 10
-        );
-        println!(
-            "| Alerts: {:<w$}|",
-            alert_manager.count(),
-            w = width - 10
-        );
+        println!("| Threat: {:<w$}|", threat_display, w = width - 10);
+        println!("| Alerts: {:<w$}|", alert_manager.count(), w = width - 10);
 
         // Show recent alerts
         let recent = alert_manager.recent(3);
@@ -261,10 +285,7 @@ async fn main() {
                     Some((x, y)) => format!(" at ({:.1}, {:.1})", x, y),
                     None => String::new(),
                 };
-                let msg = format!(
-                    "[{}] {}{}",
-                    alert.level, alert.message, loc_str
-                );
+                let msg = format!("[{}] {}{}", alert.level, alert.message, loc_str);
                 // Truncate if too long
                 let display_msg = if msg.len() > width - 3 {
                     format!("{}...", &msg[..width - 6])

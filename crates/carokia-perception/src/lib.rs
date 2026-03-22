@@ -21,13 +21,34 @@ use uuid::Uuid;
 /// Content produced by perception processing.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum PerceptContent {
-    ObjectDetection { label: String, confidence: f64, bbox: [f64; 4] },
-    AudioEvent { kind: String },
-    SpeechTranscript { text: String },
-    Obstacle { distance: f64, bearing: f64 },
-    SceneDescription { description: String, objects: Vec<String> },
-    FaceDetection { count: usize, descriptions: Vec<String> },
-    Person { name: Option<String>, distance: f64, bearing: f64 },
+    ObjectDetection {
+        label: String,
+        confidence: f64,
+        bbox: [f64; 4],
+    },
+    AudioEvent {
+        kind: String,
+    },
+    SpeechTranscript {
+        text: String,
+    },
+    Obstacle {
+        distance: f64,
+        bearing: f64,
+    },
+    SceneDescription {
+        description: String,
+        objects: Vec<String>,
+    },
+    FaceDetection {
+        count: usize,
+        descriptions: Vec<String>,
+    },
+    Person {
+        name: Option<String>,
+        distance: f64,
+        bearing: f64,
+    },
 }
 
 /// A processed percept from sensor data.

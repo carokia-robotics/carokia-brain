@@ -38,9 +38,10 @@ impl SqliteMemory {
 
     /// Store an embedding for an existing memory entry.
     pub fn store_embedding(&self, id: &str, embedding: &[f32]) -> Result<(), BrainError> {
-        let conn = self.conn.lock().map_err(|e| {
-            BrainError::Memory(format!("Lock error: {e}"))
-        })?;
+        let conn = self
+            .conn
+            .lock()
+            .map_err(|e| BrainError::Memory(format!("Lock error: {e}")))?;
         let blob = embedding_to_blob(embedding);
         conn.execute(
             "UPDATE memories SET embedding = ?1 WHERE id = ?2",
@@ -73,10 +74,7 @@ fn str_to_kind(s: &str) -> MemoryKind {
 }
 
 fn embedding_to_blob(embedding: &[f32]) -> Vec<u8> {
-    embedding
-        .iter()
-        .flat_map(|f| f.to_le_bytes())
-        .collect()
+    embedding.iter().flat_map(|f| f.to_le_bytes()).collect()
 }
 
 fn blob_to_embedding(blob: &[u8]) -> Vec<f32> {
@@ -225,9 +223,9 @@ impl MemoryStore for SqliteMemory {
         let conn = Arc::clone(&self.conn);
         let id = id.to_string();
         tokio::task::spawn_blocking(move || {
-            let conn = conn.lock().map_err(|e| {
-                BrainError::Memory(format!("Lock error: {e}"))
-            })?;
+            let conn = conn
+                .lock()
+                .map_err(|e| BrainError::Memory(format!("Lock error: {e}")))?;
             let deleted = conn
                 .execute("DELETE FROM memories WHERE id = ?1", params![id])
                 .map_err(|e| BrainError::Memory(format!("Delete failed: {e}")))?;
@@ -298,8 +296,8 @@ mod tests {
     #[tokio::test]
     async fn sqlite_filter_by_tag() {
         let mut mem = SqliteMemory::new(":memory:").unwrap();
-        let entry = make_entry(MemoryKind::Fact, "tagged", 0.5)
-            .with_tags(vec!["color".to_string()]);
+        let entry =
+            make_entry(MemoryKind::Fact, "tagged", 0.5).with_tags(vec!["color".to_string()]);
         mem.store(entry).await.unwrap();
         mem.store(make_entry(MemoryKind::Fact, "untagged", 0.5))
             .await

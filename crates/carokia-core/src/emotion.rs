@@ -67,11 +67,7 @@ impl EmotionalState {
 
     /// Return a human-readable mood label for the current state.
     pub fn mood_label(&self) -> &str {
-        match (
-            self.valence > 0.3,
-            self.valence < -0.3,
-            self.arousal > 0.6,
-        ) {
+        match (self.valence > 0.3, self.valence < -0.3, self.arousal > 0.6) {
             (true, _, false) => "content",
             (true, _, true) => "excited",
             (_, true, false) => "melancholy",

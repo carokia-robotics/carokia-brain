@@ -16,9 +16,7 @@ pub struct AlertManager {
 
 impl AlertManager {
     pub fn new() -> Self {
-        Self {
-            alerts: Vec::new(),
-        }
+        Self { alerts: Vec::new() }
     }
 
     /// Raise a new alert and log it.

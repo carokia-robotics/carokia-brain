@@ -48,10 +48,7 @@ impl<'a> FaceDetector<'a> {
             "starting with 'Face 1:', 'Face 2:', etc. For each face include 'Expression: <word>' somewhere in the line."
         );
 
-        let raw_response = self
-            .vision
-            .analyze_with_prompt(image_bytes, prompt)
-            .await?;
+        let raw_response = self.vision.analyze_with_prompt(image_bytes, prompt).await?;
 
         let (count, faces) = parse_face_response(&raw_response);
 
@@ -103,8 +100,7 @@ fn parse_face_response(response: &str) -> (usize, Vec<FaceDescription>) {
 
     // Check for "no faces" responses.
     let lower = response.to_lowercase();
-    if lower.contains("no faces") || lower.contains("0 faces") || lower.contains("no human faces")
-    {
+    if lower.contains("no faces") || lower.contains("0 faces") || lower.contains("no human faces") {
         count = 0;
         faces.clear();
     }

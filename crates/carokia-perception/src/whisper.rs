@@ -49,9 +49,9 @@ impl WhisperTranscriber {
             .full(params, &mono_16k)
             .map_err(|e| BrainError::Perception(format!("Whisper transcription failed: {e}")))?;
 
-        let num_segments = state.full_n_segments().map_err(|e| {
-            BrainError::Perception(format!("Failed to get segment count: {e}"))
-        })?;
+        let num_segments = state
+            .full_n_segments()
+            .map_err(|e| BrainError::Perception(format!("Failed to get segment count: {e}")))?;
 
         let mut text = String::new();
         for i in 0..num_segments {

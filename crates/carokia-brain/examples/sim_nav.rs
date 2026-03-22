@@ -2,6 +2,9 @@
 //!
 //! Run with: cargo run --example sim_nav -p carokia-brain --features simulation
 //!
+//! With clap CLI:
+//!   cargo run --example sim_nav -p carokia-brain --features "simulation,cli" -- --max-ticks 300
+//!
 //! The robot navigates from its starting position toward a target,
 //! avoiding obstacles using lidar-based steering.
 
@@ -10,9 +13,34 @@
 async fn main() {
     use carokia_sim::{Simulation, Vec2};
 
+    #[cfg(feature = "cli")]
+    use clap::Parser;
+
+    #[cfg(feature = "cli")]
+    #[derive(Parser)]
+    #[command(name = "carokia-sim-nav", about = "Carokia autonomous navigation demo")]
+    struct Args {
+        /// Maximum simulation ticks
+        #[arg(long, default_value_t = 500)]
+        max_ticks: usize,
+        /// Target X coordinate
+        #[arg(long, default_value_t = 8.0)]
+        target_x: f64,
+        /// Target Y coordinate
+        #[arg(long, default_value_t = 8.0)]
+        target_y: f64,
+    }
+
+    #[cfg(feature = "cli")]
+    let args = Args::parse();
+
+    #[cfg(feature = "cli")]
+    let (max_ticks, target) = (args.max_ticks, Vec2::new(args.target_x, args.target_y));
+
+    #[cfg(not(feature = "cli"))]
+    let (max_ticks, target) = (500, Vec2::new(8.0, 8.0));
+
     let mut sim = Simulation::new_default();
-    let target = Vec2::new(8.0, 8.0);
-    let max_ticks = 500;
 
     println!("Carokia 2D Simulation - Autonomous Navigation Demo");
     println!("Robot '@' navigating to target 'T' while avoiding obstacles 'O'");
@@ -58,9 +86,7 @@ async fn main() {
 
         // Check front lidar rays for obstacles.
         // Rays 0, 1, and last are roughly forward.
-        let front_min = lidar[0]
-            .min(lidar[1])
-            .min(lidar[lidar.len() - 1]);
+        let front_min = lidar[0].min(lidar[1]).min(lidar[lidar.len() - 1]);
 
         let (linear, angular) = if front_min < 1.0 {
             // Obstacle close ahead — stop and turn away.

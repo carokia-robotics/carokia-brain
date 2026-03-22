@@ -9,6 +9,9 @@
 //!
 //!   # Single shot (no loop):
 //!   cargo run --example vision_demo --features vision -- --file image.jpg --once
+//!
+//!   # With clap CLI:
+//!   cargo run --example vision_demo --features "vision,cli" -- --model gemma3:latest --file image.jpg
 
 #[cfg(feature = "vision")]
 mod inner {
@@ -17,23 +20,52 @@ mod inner {
     use carokia_perception::vision::{VisionAnalyzer, VisionConfig};
     use std::time::Duration;
 
+    #[cfg(feature = "cli")]
+    use clap::Parser;
+
+    #[cfg(feature = "cli")]
+    #[derive(Parser)]
+    #[command(name = "carokia-vision", about = "Carokia vision analysis demo")]
+    struct Args {
+        /// Vision model name
+        #[arg(long, default_value = "gemma3:latest")]
+        model: String,
+        /// Path to an image file (omit for live camera)
+        #[arg(long)]
+        file: Option<String>,
+        /// Run once then exit
+        #[arg(long)]
+        once: bool,
+    }
+
     pub async fn run() {
-        let args: Vec<String> = std::env::args().collect();
+        #[cfg(feature = "cli")]
+        let args = Args::parse();
 
-        let file_path = args
-            .iter()
-            .position(|a| a == "--file")
-            .and_then(|i| args.get(i + 1))
-            .cloned();
+        #[cfg(feature = "cli")]
+        let (model, file_path, once) = (args.model, args.file, args.once);
 
-        let once = args.iter().any(|a| a == "--once");
+        #[cfg(not(feature = "cli"))]
+        let (model, file_path, once) = {
+            let args: Vec<String> = std::env::args().collect();
 
-        let model = args
-            .iter()
-            .position(|a| a == "--model")
-            .and_then(|i| args.get(i + 1))
-            .cloned()
-            .unwrap_or_else(|| "gemma3:latest".to_string());
+            let file_path = args
+                .iter()
+                .position(|a| a == "--file")
+                .and_then(|i| args.get(i + 1))
+                .cloned();
+
+            let once = args.iter().any(|a| a == "--once");
+
+            let model = args
+                .iter()
+                .position(|a| a == "--model")
+                .and_then(|i| args.get(i + 1))
+                .cloned()
+                .unwrap_or_else(|| "gemma3:latest".to_string());
+
+            (model, file_path, once)
+        };
 
         let config = VisionConfig {
             model,

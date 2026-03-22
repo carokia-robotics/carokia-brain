@@ -2,33 +2,36 @@ use thiserror::Error;
 
 #[derive(Debug, Error)]
 pub enum BrainError {
-    #[error("sensor error: {0}")]
+    #[error("Sensor subsystem failed: {0}")]
     Sensor(String),
 
-    #[error("actuator error: {0}")]
+    #[error("Actuator command failed: {0}")]
     Actuator(String),
 
-    #[error("memory error: {0}")]
+    #[error("Memory store operation failed: {0}")]
     Memory(String),
 
-    #[error("perception error: {0}")]
+    #[error("Perception pipeline failed: {0}")]
     Perception(String),
 
-    #[error("language error: {0}")]
+    #[error("Language backend error: {0}")]
     Language(String),
 
-    #[error("planner error: {0}")]
+    #[error("Planner could not decompose goal: {0}")]
     Planner(String),
 
-    #[error("decision error: {0}")]
+    #[error("Decision engine error: {0}")]
     Decision(String),
 
-    #[error("bus error: {0}")]
+    #[error("Event bus error: {0}")]
     Bus(String),
 
-    #[error("config error: {0}")]
+    #[error("Configuration error: {0}")]
     Config(String),
 
-    #[error("internal error: {0}")]
+    #[error("Internal error: {0}")]
     Internal(String),
+
+    #[error("I/O error: {0}")]
+    Io(#[from] std::io::Error),
 }
