@@ -51,7 +51,26 @@ pub struct MemoryQuery {
     pub tag: Option<String>,
     pub min_importance: Option<f64>,
     pub limit: Option<usize>,
+    /// Optional query embedding vector for semantic recall.
+    pub query_embedding: Option<Vec<f32>>,
 }
+
+/// Compute cosine similarity between two vectors.
+pub fn cosine_similarity(a: &[f32], b: &[f32]) -> f32 {
+    let dot: f32 = a.iter().zip(b).map(|(x, y)| x * y).sum();
+    let mag_a: f32 = a.iter().map(|x| x * x).sum::<f32>().sqrt();
+    let mag_b: f32 = b.iter().map(|x| x * x).sum::<f32>().sqrt();
+    if mag_a == 0.0 || mag_b == 0.0 {
+        return 0.0;
+    }
+    dot / (mag_a * mag_b)
+}
+
+#[cfg(feature = "sqlite")]
+pub mod sqlite;
+
+#[cfg(feature = "embeddings")]
+pub mod embeddings;
 
 /// Trait for memory storage backends.
 #[async_trait]
@@ -175,6 +194,37 @@ mod tests {
         mem.store(entry).await.unwrap();
         assert!(mem.forget(&id).await.unwrap());
         assert!(mem.is_empty());
+    }
+
+    #[test]
+    fn cosine_similarity_identical_vectors() {
+        let a = vec![1.0, 0.0, 0.0];
+        let sim = cosine_similarity(&a, &a);
+        assert!((sim - 1.0).abs() < 1e-6);
+    }
+
+    #[test]
+    fn cosine_similarity_orthogonal_vectors() {
+        let a = vec![1.0, 0.0, 0.0];
+        let b = vec![0.0, 1.0, 0.0];
+        let sim = cosine_similarity(&a, &b);
+        assert!(sim.abs() < 1e-6);
+    }
+
+    #[test]
+    fn cosine_similarity_opposite_vectors() {
+        let a = vec![1.0, 0.0];
+        let b = vec![-1.0, 0.0];
+        let sim = cosine_similarity(&a, &b);
+        assert!((sim + 1.0).abs() < 1e-6);
+    }
+
+    #[test]
+    fn cosine_similarity_zero_vector() {
+        let a = vec![0.0, 0.0, 0.0];
+        let b = vec![1.0, 2.0, 3.0];
+        let sim = cosine_similarity(&a, &b);
+        assert_eq!(sim, 0.0);
     }
 
     #[tokio::test]

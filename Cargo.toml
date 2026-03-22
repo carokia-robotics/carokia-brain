@@ -34,3 +34,4 @@ rodio = { version = "0.19", features = ["wav"] }
 hound = "3.5"
 image = "0.25"
 base64 = "0.22"
+rusqlite = { version = "0.31", features = ["bundled"] }

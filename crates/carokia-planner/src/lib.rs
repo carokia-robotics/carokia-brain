@@ -3,6 +3,12 @@ use carokia_core::{Action, BrainError, Timestamp};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
+#[cfg(feature = "llm")]
+pub mod llm_planner;
+
+#[cfg(feature = "llm")]
+pub use llm_planner::LlmPlanner;
+
 /// A high-level goal.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Goal {

@@ -17,3 +17,11 @@ record_seconds = 5
 enabled = true
 model = "llava"
 camera_device = 0
+
+[memory]
+backend = "sqlite"
+db_path = "~/.carokia/memory.db"
+
+[memory.embeddings]
+enabled = true
+model = "nomic-embed-text"

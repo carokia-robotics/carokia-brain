@@ -4,8 +4,13 @@ edition.workspace = true
 version.workspace = true
 license.workspace = true
 
+[features]
+default = []
+llm = ["carokia-language"]
+
 [dependencies]
 carokia-core = { path = "../carokia-core" }
+carokia-language = { path = "../carokia-language", optional = true, default-features = false }
 tokio = { workspace = true }
 tracing = { workspace = true }
 serde = { workspace = true }

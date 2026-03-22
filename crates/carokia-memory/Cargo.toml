@@ -4,6 +4,11 @@ edition.workspace = true
 version.workspace = true
 license.workspace = true
 
+[features]
+default = []
+sqlite = ["rusqlite"]
+embeddings = ["reqwest"]
+
 [dependencies]
 carokia-core = { path = "../carokia-core" }
 tokio = { workspace = true }
@@ -13,3 +18,5 @@ serde_json = { workspace = true }
 thiserror = { workspace = true }
 async-trait = { workspace = true }
 uuid = { workspace = true }
+rusqlite = { workspace = true, optional = true }
+reqwest = { workspace = true, optional = true }
