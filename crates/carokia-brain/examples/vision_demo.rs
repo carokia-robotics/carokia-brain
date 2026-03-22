@@ -33,7 +33,7 @@ mod inner {
             .position(|a| a == "--model")
             .and_then(|i| args.get(i + 1))
             .cloned()
-            .unwrap_or_else(|| "llava".to_string());
+            .unwrap_or_else(|| "gemma3:latest".to_string());
 
         let config = VisionConfig {
             model,

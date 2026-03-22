@@ -66,7 +66,7 @@ impl CameraSource for FfmpegCamera {
                 "-video_size",
                 &video_size,
                 "-framerate",
-                "1",
+                "30",
                 "-i",
                 &device,
                 "-frames:v",

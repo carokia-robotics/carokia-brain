@@ -15,7 +15,7 @@ record_seconds = 5
 
 [vision]
 enabled = true
-model = "llava"
+model = "gemma3:latest"
 camera_device = 0
 
 [memory]
