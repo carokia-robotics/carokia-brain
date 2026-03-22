@@ -1,0 +1,10 @@
+[package]
+name = "carokia-sim"
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+
+[dependencies]
+carokia-core = { path = "../carokia-core" }
+serde = { workspace = true }
+serde_json = { workspace = true }

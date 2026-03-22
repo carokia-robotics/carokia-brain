@@ -7,6 +7,7 @@ members = [
     "crates/carokia-language",
     "crates/carokia-planner",
     "crates/carokia-decision",
+    "crates/carokia-sim",
     "crates/carokia-brain",
 ]
 

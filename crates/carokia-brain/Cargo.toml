@@ -11,6 +11,7 @@ vision = ["carokia-perception/vision"]
 sqlite = ["carokia-memory/sqlite"]
 embeddings = ["carokia-memory/embeddings"]
 llm-planner = ["carokia-planner/llm"]
+simulation = ["carokia-sim"]
 
 [dependencies]
 carokia-core = { path = "../carokia-core" }
@@ -29,3 +30,4 @@ async-trait = { workspace = true }
 uuid = { workspace = true }
 tokio-util = { workspace = true }
 ctrlc = { version = "3.4", optional = true }
+carokia-sim = { path = "../carokia-sim", optional = true }

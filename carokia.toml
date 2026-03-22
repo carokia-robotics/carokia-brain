@@ -25,3 +25,10 @@ db_path = "~/.carokia/memory.db"
 [memory.embeddings]
 enabled = true
 model = "nomic-embed-text"
+
+[simulation]
+enabled = true
+world = "simple_room"
+room_width = 10.0
+room_height = 10.0
+tick_rate_hz = 10.0
