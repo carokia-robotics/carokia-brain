@@ -1,0 +1,9 @@
+[language]
+provider = "ollama"
+host = "http://localhost"
+port = 11434
+model = "llama3.2"
+
+[brain]
+tick_rate_hz = 10.0
+system_prompt = "You are Carokia, an advanced autonomous robot companion. You are helpful, protective, and loyal. Keep responses concise."
