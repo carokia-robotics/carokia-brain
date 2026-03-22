@@ -1,8 +1,34 @@
+pub mod emergency;
+pub mod patrol;
+pub mod threat;
+
 use async_trait::async_trait;
 use carokia_core::{Action, ActionCommand, BrainError, Priority};
 use carokia_memory::MemoryEntry;
 use carokia_perception::Percept;
 use carokia_planner::{Goal, TaskNode, TaskStatus};
+
+pub use emergency::EmergencyResponseBehavior;
+pub use patrol::PatrolBehavior;
+pub use threat::ThreatDetectionBehavior;
+
+/// Threat level for the guardian system.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub enum ThreatLevel {
+    None = 0,
+    Suspicious = 1,
+    Confirmed = 2,
+}
+
+impl std::fmt::Display for ThreatLevel {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            ThreatLevel::None => write!(f, "NONE"),
+            ThreatLevel::Suspicious => write!(f, "SUSPICIOUS"),
+            ThreatLevel::Confirmed => write!(f, "CONFIRMED"),
+        }
+    }
+}
 
 /// Aggregated world state for decision-making.
 #[derive(Debug, Clone)]
@@ -12,6 +38,7 @@ pub struct WorldState {
     pub tasks: Vec<TaskNode>,
     pub memories: Vec<MemoryEntry>,
     pub tick: u64,
+    pub threat_level: ThreatLevel,
 }
 
 impl WorldState {
@@ -22,6 +49,7 @@ impl WorldState {
             tasks: Vec::new(),
             memories: Vec::new(),
             tick: 0,
+            threat_level: ThreatLevel::None,
         }
     }
 
@@ -241,5 +269,66 @@ mod tests {
         let cmd = engine.tick(&state).await.unwrap().unwrap();
         assert_eq!(cmd.priority, Priority::Normal);
         assert!(matches!(cmd.action, Action::Speak { .. }));
+    }
+
+    // --- ThreatLevel tests ---
+
+    #[test]
+    fn threat_level_ordering() {
+        assert!(ThreatLevel::None < ThreatLevel::Suspicious);
+        assert!(ThreatLevel::Suspicious < ThreatLevel::Confirmed);
+        assert!(ThreatLevel::None < ThreatLevel::Confirmed);
+    }
+
+    #[test]
+    fn threat_level_display() {
+        assert_eq!(format!("{}", ThreatLevel::None), "NONE");
+        assert_eq!(format!("{}", ThreatLevel::Suspicious), "SUSPICIOUS");
+        assert_eq!(format!("{}", ThreatLevel::Confirmed), "CONFIRMED");
+    }
+
+    #[test]
+    fn threat_level_equality() {
+        assert_eq!(ThreatLevel::None, ThreatLevel::None);
+        assert_ne!(ThreatLevel::None, ThreatLevel::Confirmed);
+    }
+
+    // --- Integration: full behavior priority chain ---
+
+    #[tokio::test]
+    async fn integration_patrol_to_detect_to_emergency() {
+        // Set up engine with guardian behaviors
+        let mut engine = BehaviorDecisionEngine::new();
+        engine.add_behavior(Box::new(EmergencyHalt));
+        engine.add_behavior(Box::new(EmergencyResponseBehavior::new()));
+        engine.add_behavior(Box::new(ThreatDetectionBehavior::new(5.0, 2)));
+        engine.add_behavior(Box::new(PatrolBehavior::new(vec![(5.0, 5.0)])));
+        engine.add_behavior(Box::new(Idle));
+
+        // Phase 1: No threat — patrol fires (Normal priority, below High behaviors that don't fire)
+        let state = WorldState::new();
+        let cmd = engine.tick(&state).await.unwrap().unwrap();
+        assert_eq!(cmd.priority, Priority::Normal); // PatrolBehavior
+
+        // Phase 2: Unknown person detected — ThreatDetection fires (High)
+        let mut state = WorldState::new();
+        state.percepts.push(Percept::new(
+            Modality::Vision,
+            PerceptContent::Person { name: None, distance: 3.0, bearing: 0.0 },
+            0.9,
+        ));
+        let cmd = engine.tick(&state).await.unwrap().unwrap();
+        assert_eq!(cmd.priority, Priority::High); // ThreatDetection (Suspicious)
+
+        // Phase 3: Sustained detection — still ThreatDetection but now Confirmed
+        let cmd = engine.tick(&state).await.unwrap().unwrap();
+        assert_eq!(cmd.priority, Priority::High);
+
+        // Phase 4: With confirmed threat level in WorldState — EmergencyResponse fires
+        let mut state = WorldState::new();
+        state.threat_level = ThreatLevel::Confirmed;
+        let cmd = engine.tick(&state).await.unwrap().unwrap();
+        assert_eq!(cmd.priority, Priority::High);
+        assert!(matches!(cmd.action, Action::Halt)); // EmergencyResponse halts
     }
 }

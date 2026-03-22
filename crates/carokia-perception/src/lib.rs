@@ -27,6 +27,7 @@ pub enum PerceptContent {
     Obstacle { distance: f64, bearing: f64 },
     SceneDescription { description: String, objects: Vec<String> },
     FaceDetection { count: usize, descriptions: Vec<String> },
+    Person { name: Option<String>, distance: f64, bearing: f64 },
 }
 
 /// A processed percept from sensor data.

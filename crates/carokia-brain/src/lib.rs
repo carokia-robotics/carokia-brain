@@ -1,3 +1,5 @@
+pub mod alerts;
+
 use std::time::Duration;
 
 use carokia_core::{Action, BrainError, Modality, SensorFrame, SensorPayload};
@@ -120,6 +122,7 @@ impl Brain {
             tasks: all_tasks,
             memories,
             tick: self.tick_count,
+            threat_level: carokia_decision::ThreatLevel::None,
         };
 
         // 6. Decision.
