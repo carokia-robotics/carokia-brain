@@ -57,7 +57,7 @@ impl FfmpegCamera {
 impl CameraSource for FfmpegCamera {
     async fn capture_frame(&self) -> Result<Vec<u8>, BrainError> {
         let video_size = format!("{}x{}", self.width, self.height);
-        let device = format!("{}:", self.device_index);
+        let device = format!("{}:none", self.device_index);
 
         let output = tokio::process::Command::new("ffmpeg")
             .args([

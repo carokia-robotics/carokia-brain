@@ -32,7 +32,7 @@ fn default_ollama_port() -> u16 {
     11434
 }
 fn default_ollama_model() -> String {
-    "llama3.2".to_string()
+    "gemma3:latest".to_string()
 }
 fn default_claude_model() -> String {
     "claude-sonnet-4-20250514".to_string()
@@ -82,7 +82,7 @@ mod tests {
             LlmProviderConfig::Ollama { host, port, model } => {
                 assert_eq!(host, "http://localhost");
                 assert_eq!(port, 11434);
-                assert_eq!(model, "llama3.2");
+                assert_eq!(model, "gemma3:latest");
             }
             _ => panic!("Expected Ollama variant"),
         }
