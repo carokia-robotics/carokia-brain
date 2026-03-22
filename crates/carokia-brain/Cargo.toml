@@ -7,6 +7,7 @@ license.workspace = true
 [features]
 default = []
 voice = ["carokia-perception/audio", "carokia-perception/whisper", "ctrlc"]
+vision = ["carokia-perception/vision"]
 
 [dependencies]
 carokia-core = { path = "../carokia-core" }

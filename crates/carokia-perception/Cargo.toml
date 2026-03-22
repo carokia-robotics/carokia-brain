@@ -8,6 +8,7 @@ license.workspace = true
 default = []
 audio = ["cpal", "hound"]
 whisper = ["whisper-rs"]
+vision = ["reqwest", "base64", "image"]
 
 [dependencies]
 carokia-core = { path = "../carokia-core" }
@@ -21,3 +22,6 @@ uuid = { workspace = true }
 cpal = { workspace = true, optional = true }
 hound = { workspace = true, optional = true }
 whisper-rs = { workspace = true, optional = true }
+reqwest = { workspace = true, optional = true }
+base64 = { workspace = true, optional = true }
+image = { workspace = true, optional = true }

@@ -4,6 +4,15 @@ pub mod microphone;
 #[cfg(feature = "whisper")]
 pub mod whisper;
 
+#[cfg(feature = "vision")]
+pub mod camera;
+
+#[cfg(feature = "vision")]
+pub mod vision;
+
+#[cfg(feature = "vision")]
+pub mod face;
+
 use async_trait::async_trait;
 use carokia_core::{BrainError, Modality, SensorFrame, Timestamp};
 use serde::{Deserialize, Serialize};
@@ -16,6 +25,8 @@ pub enum PerceptContent {
     AudioEvent { kind: String },
     SpeechTranscript { text: String },
     Obstacle { distance: f64, bearing: f64 },
+    SceneDescription { description: String, objects: Vec<String> },
+    FaceDetection { count: usize, descriptions: Vec<String> },
 }
 
 /// A processed percept from sensor data.
