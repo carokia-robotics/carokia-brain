@@ -8,6 +8,7 @@ license.workspace = true
 default = []
 sqlite = ["rusqlite"]
 embeddings = ["reqwest"]
+reflection = ["carokia-language"]
 
 [dependencies]
 carokia-core = { path = "../carokia-core" }
@@ -20,3 +21,4 @@ async-trait = { workspace = true }
 uuid = { workspace = true }
 rusqlite = { workspace = true, optional = true }
 reqwest = { workspace = true, optional = true }
+carokia-language = { path = "../carokia-language", optional = true, default-features = false }

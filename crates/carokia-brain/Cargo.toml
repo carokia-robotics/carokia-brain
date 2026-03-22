@@ -11,6 +11,8 @@ vision = ["carokia-perception/vision"]
 sqlite = ["carokia-memory/sqlite"]
 embeddings = ["carokia-memory/embeddings"]
 llm-planner = ["carokia-planner/llm"]
+reasoning = ["carokia-planner/reasoning"]
+reflection = ["carokia-memory/reflection"]
 simulation = ["carokia-sim"]
 
 [dependencies]

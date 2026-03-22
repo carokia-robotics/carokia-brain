@@ -1,4 +1,5 @@
 pub mod emergency;
+pub mod events;
 pub mod patrol;
 pub mod threat;
 
@@ -9,6 +10,7 @@ use carokia_perception::Percept;
 use carokia_planner::{Goal, TaskNode, TaskStatus};
 
 pub use emergency::EmergencyResponseBehavior;
+pub use events::{EventDrivenBehavior, EventReaction, EventTrigger};
 pub use patrol::PatrolBehavior;
 pub use threat::ThreatDetectionBehavior;
 

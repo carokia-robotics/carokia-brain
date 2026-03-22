@@ -72,6 +72,9 @@ pub mod sqlite;
 #[cfg(feature = "embeddings")]
 pub mod embeddings;
 
+#[cfg(feature = "reflection")]
+pub mod reflection;
+
 /// Trait for memory storage backends.
 #[async_trait]
 pub trait MemoryStore: Send + Sync {
